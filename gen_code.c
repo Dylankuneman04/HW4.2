@@ -50,3 +50,25 @@ static BOFHeader gen_code_program_header(code_seq main_cs)
     ret.stack_bottom_addr = sba;
     return ret;
 }
+
+static void gen_code_output_literals(BOFFILE bf)
+{
+    literal_table_start_iteration();
+    while(literal_table_iteration_has_next())
+    {
+        word_type w = literal_table_iteration_next();
+        bof_write_word(bf, w);
+    }
+    literal_table_end_iteration();
+}
+
+void gen_code_output_program(BOFFILE bf, code_seq main_cs) 
+{
+    BOFHeader header = gen_code_program_header(main_cs);
+
+    bof_write_header(bf, header);
+    gen_code_output_seq(bf, main_cs);
+    gen_code_output_literals(bf);
+    bof_close(bf);
+}
+
