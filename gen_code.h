@@ -6,4 +6,6 @@
 #include "instruction.h"
 #include "code.h"
 
+#define STACK_SPACE 4096
+
 #endif
