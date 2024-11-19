@@ -1,4 +1,4 @@
-// $Id: literal_table.h,v 1.2 2023/11/13 12:45:52 leavens Exp $
+// Heavily based on FLOAT's literal_table.h
 #ifndef _LITERAL_TABLE_H
 #define _LITERAL_TABLE_H
 #include <stdbool.h>
@@ -18,15 +18,15 @@ extern void literal_table_initialize();
 
 // Return the offset of sought if it is in the table,
 // otherwise return -1.
-extern int literal_table_find_offset(const char *sought, float_type value);
+extern int literal_table_find_offset(const char *sought, word_type value);
 
 // Return true just when sought is in the table
-extern bool literal_table_present(const char *sought, float_type value);
+extern bool literal_table_present(const char *sought, word_type value);
 
 // Return the word offset for val_string/value
 // entering it in the table if it's not already present
 extern unsigned int literal_table_lookup(const char *val_string,
-					 float_type value);
+					 word_type value);
 
 // === iteration helpers ===
 
@@ -42,6 +42,6 @@ extern bool literal_table_iteration_has_next();
 
 // Return the next word_type in the literal table
 // and advance the iteration
-extern float_type literal_table_iteration_next();
+extern word_type literal_table_iteration_next();
 
 #endif
