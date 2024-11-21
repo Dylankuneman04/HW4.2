@@ -8,6 +8,4 @@
 
 #define STACK_SPACE 4096
 
-extern void ge
-
 #endif
