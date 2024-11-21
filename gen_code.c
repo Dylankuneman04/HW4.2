@@ -2,6 +2,7 @@
 #include <string.h>
 #include <limits.h>
 #include <assert.h>
+#include "machine_types.h"
 #include "spl.tab.h"
 #include "utilities.h"
 #include "ast.h"
@@ -13,6 +14,7 @@
 #include "literal_table.h"
 #include "gen_code.h"
 #include "code_seq.h"
+#include "code_utils.h"
 
 void gen_code_initialize() 
 {
@@ -62,7 +64,7 @@ static void gen_code_output_literals(BOFFILE bf)
     literal_table_end_iteration();
 }
 
-void gen_code_output_program(BOFFILE bf, code_seq main_cs) 
+static void gen_code_output_program(BOFFILE bf, code_seq main_cs) 
 {
     BOFHeader header = gen_code_program_header(main_cs);
 
@@ -72,3 +74,26 @@ void gen_code_output_program(BOFFILE bf, code_seq main_cs)
     bof_close(bf);
 }
 
+void gen_code_program(BOFFILE bf, block_t prog)
+{
+    code_seq main_cs = gen_code_blocks(prog);
+    
+    gen_code_output_program(bf, main_cs);
+
+}
+
+code_seq gen_code_blocks(block_t prog)
+{
+    code_seq main_cs;
+    main_cs = gen_code_var_decls(prog.var_decls);
+
+    int vars_len_in_bytes = (code_seq_size(main_cs) / 2 * BYTES_PER_WORD);
+    code_seq_concat(&main_cs, gen_code_const_decls());
+    code_seq_concat(&main_cs, code_utils_save_registers_for_AR());
+    code_seq_concat(&main_cs, gen_code_stmt(prog.stmts));
+    code_seq_concat(&main_cs, code_utils_restore_registers_from_AR());
+    code_seq_concat(&main_cs, code_utils_deallocate_stack_space(vars_len_in_bytes));
+    code_seq_add_to_end(main_cs, code_exit());
+
+    return main_cs;
+}
