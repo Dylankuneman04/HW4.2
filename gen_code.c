@@ -97,3 +97,63 @@ code_seq gen_code_blocks(block_t prog)
 
     return main_cs;
 }
+
+//Dylans code below
+void gen_push_number(code_seq *seq, int number) {
+    //Load the number into REG0
+    reg_num_type reg = 0;  
+    code *lit_instr = code_lit(reg, 0, number);  
+    code_seq_add_to_end(seq, lit_instr);
+
+    //Store the value of REG0 to the stack (using REG1 as stack pointer)
+    reg_num_type sp_register = 1;  
+    code *swr_instr = code_swr(reg, sp_register, 0);  
+    code_seq_add_to_end(seq, swr_instr);
+
+    //Adjust the stack pointer (increment by 4 for next value)
+    code *adjust_sp_instr = code_addi(sp_register, 0, 4); 
+    code_seq_add_to_end(seq, adjust_sp_instr);
+}
+
+//function to print a char
+void gen_print_char(code_seq *seq, char c) {
+    // Step 1: Load the character into a register (e.g., REG0)
+    reg_num_type reg = 0;  
+    code *lit_instr = code_lit(reg, 0, (int)c);  
+    code_seq_add_to_end(seq, lit_instr);
+
+    // Step 2: Make the system call to print the character (print_char_sc = 4)
+    code *syscall_instr = code_syscall(4); 
+    code_seq_add_to_end(seq, syscall_instr);
+}
+
+// function to read a char
+void gen_read_char(code_seq *seq) {
+    //Make the system call to read a character (read_char_sc = 5)
+    code *syscall_instr = code_syscall(5);
+    code_seq_add_to_end(seq, syscall_instr);
+}
+
+// Function to print an integer
+void gen_print_int(code_seq *seq, int num) {
+    //Load the integer into a register (e.g., REG0)
+    reg_num_type reg = 0; 
+    code *lit_instr = code_lit(reg, 0, num); 
+    code_seq_add_to_end(seq, lit_instr);
+
+    //Make the system call to print the integer (print_int_sc = 3)
+    code *syscall_instr = code_syscall(3); 
+    code_seq_add_to_end(seq, syscall_instr);
+}
+
+//function to print a string
+void gen_print_str(code_seq *seq, const char *str) {
+    //Load the address of the string into a register (e.g., REG0)
+    reg_num_type reg = 0; 
+    code *lit_instr = code_lit(reg, 0, (int)str); 
+    code_seq_add_to_end(seq, lit_instr);
+
+    //  Make the system call to print the string (print_str_sc = 2)
+    code *syscall_instr = code_syscall(2);  
+    code_seq_add_to_end(seq, syscall_instr);
+}
